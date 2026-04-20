@@ -9,7 +9,6 @@ import pandas as pd
 conn = sqlite3.connect('data.sqlite')
 
 pd.read_sql("""SELECT * FROM sqlite_master""", conn)
-
 # CodeGrade step1
 # Replace None with your code
 df_boston = pd.read_sql("""SELECT firstName || ' ' || lastName AS firstName, jobTitle
@@ -27,7 +26,6 @@ df_zero_emp = pd.read_sql("""SELECT
                             LEFT JOIN employees e ON o.officeCode = e.officeCode
                             WHERE e.employeeNumber IS NULL;
                             """, conn)
-
 # CodeGrade step3
 # Replace None with your code
 df_employee = pd.read_sql("""
@@ -105,15 +103,15 @@ df_total_customers = pd.read_sql("""
 # Replace None with your code
 df_customers = pd.read_sql("""
                         SELECT 
-                                o.officeCode, 
-                                o.city, 
-                                COUNT(c.customerNumber) AS n_customers
+                            o.officeCode, 
+                            o.city, 
+                            COUNT(c.customerNumber) AS n_customers
                         FROM offices o
-                            JOIN employees e ON o.officeCode = e.officeCode
-                            JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
-                            GROUP BY o.officeCode, o.city
-                            ORDER BY n_customers DESC;
-                            """, conn)
+                        JOIN employees e ON o.officeCode = e.officeCode
+                        JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
+                        WHERE o.officeCode = '1'
+                        GROUP BY o.officeCode, o.city;
+                        """, conn)
 # CodeGrade step10
 # Replace None with your code
 df_under_20 = pd.read_sql("""
@@ -132,7 +130,6 @@ df_under_20 = pd.read_sql("""
             COUNT(c.customerNumber) AS customer_count
         FROM employees e
         LEFT JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
-        WHERE o.officeCode = '1'
         GROUP BY e.employeeNumber
     ) AS employee_counts
     WHERE customer_count < 20
