@@ -120,20 +120,21 @@ df_under_20 = pd.read_sql("""
         lastName, 
         jobTitle, 
         officeCode, 
-        customer_count
+        n_customers
     FROM (
         SELECT 
             e.firstName, 
             e.lastName, 
             e.jobTitle, 
             e.officeCode, 
-            COUNT(c.customerNumber) AS customer_count
+            COUNT(c.customerNumber) AS n_customers
         FROM employees e
         LEFT JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
         GROUP BY e.employeeNumber
-    ) AS employee_counts
-    WHERE customer_count < 20
-    ORDER BY firstName ASC;
+    ) AS sub
+    WHERE jobTitle = 'Sales Rep' 
+      AND n_customers < 20
+    ORDER BY firstName ASC LIMIT 15;
 """, conn)
 # Run this cell without changes
 
