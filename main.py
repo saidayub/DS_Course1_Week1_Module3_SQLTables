@@ -12,12 +12,11 @@ pd.read_sql("""SELECT * FROM sqlite_master""", conn)
 
 # CodeGrade step1
 # Replace None with your code
-df_boston = pd.read_sql("""SELECT firstName, lastName, jobTitle
+df_boston = pd.read_sql("""SELECT firstName || ' ' || lastName AS firstName, jobTitle
                            FROM employees e
                            INNER JOIN offices o ON  o.officeCode = e.officeCode
                            WHERE o.city = 'Boston'
              """,conn)
-
 # CodeGrade step2
 # Replace None with your code
 df_zero_emp = pd.read_sql("""SELECT 
@@ -118,26 +117,27 @@ df_customers = pd.read_sql("""
 # CodeGrade step10
 # Replace None with your code
 df_under_20 = pd.read_sql("""
-                        WITH UnderperformingProducts AS (
-                        SELECT od.productCode
-                        FROM orderdetails od
-                        JOIN orders o ON od.orderNumber = o.orderNumber
-                        GROUP BY od.productCode
-                        HAVING COUNT(DISTINCT o.customerNumber) < 20
-                            )
-                            SELECT DISTINCT
-                                e.employeeNumber, 
-                                e.firstName, 
-                                e.lastName, 
-                                o.city, 
-                                o.officeCode
-                            FROM employees e
-                            JOIN offices o ON e.officeCode = o.officeCode
-                            JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
-                            JOIN orders ord ON c.customerNumber = ord.customerNumber
-                            JOIN orderdetails od ON ord.orderNumber = od.orderNumber
-                            WHERE od.productCode IN (SELECT productCode FROM UnderperformingProducts);
-                            """,conn)
+    SELECT 
+        firstName, 
+        lastName, 
+        jobTitle, 
+        officeCode, 
+        customer_count
+    FROM (
+        SELECT 
+            e.firstName, 
+            e.lastName, 
+            e.jobTitle, 
+            e.officeCode, 
+            COUNT(c.customerNumber) AS customer_count
+        FROM employees e
+        LEFT JOIN customers c ON e.employeeNumber = c.salesRepEmployeeNumber
+        WHERE o.officeCode = '1'
+        GROUP BY e.employeeNumber
+    ) AS employee_counts
+    WHERE customer_count < 20
+    ORDER BY firstName ASC;
+""", conn)
 # Run this cell without changes
 
 conn.close()
