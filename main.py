@@ -11,7 +11,7 @@ conn = sqlite3.connect('data.sqlite')
 pd.read_sql("""SELECT * FROM sqlite_master""", conn)
 # CodeGrade step1
 # Replace None with your code
-df_boston = pd.read_sql("""SELECT firstName || ' ' || lastName AS firstName, jobTitle
+df_boston = pd.read_sql("""SELECT firstName, jobTitle
                            FROM employees e
                            INNER JOIN offices o ON  o.officeCode = e.officeCode
                            WHERE o.city = 'Boston'
